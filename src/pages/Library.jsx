@@ -115,21 +115,35 @@ export default function Library() {
             className="absolute inset-0"
           >
             <div className="relative w-full h-full">
-              <div className="absolute inset-0 bg-black">
+              <div className="absolute inset-0">
                 <img
                   src={featuredGames[currentSlide]?.imageUrl}
                   alt={featuredGames[currentSlide]?.game}
                   className="w-full h-full object-cover"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                  }}
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
               </div>
-              {/* Dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide mb-4 ${
+                  rarityBgColors[featuredGames[currentSlide]?.rarity.toLowerCase()]
+                }`}>
+                  {featuredGames[currentSlide]?.rarity.toUpperCase()}
+                </div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                  {featuredGames[currentSlide]?.game}
+                </h1>
+                <p className="text-lg max-w-2xl mb-6">
+                  {featuredGames[currentSlide]?.description}
+                </p>
+                <div className="grid grid-cols-2 gap-3 mb-4 max-w-lg">
+                  {featuredGames[currentSlide]?.features?.slice(0, 4).map((feature, index) => (
+                    <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
+                      <span className="text-gray-400 text-sm">{feature.label}</span>
+                      <div className="text-white font-medium">{feature.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -145,24 +159,6 @@ export default function Library() {
               transition={{ duration: 0.5 }}
               className="w-[500px] pl-4"
             >
-              <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide ${
-                rarityBgColors[featuredGames[currentSlide]?.rarity.toLowerCase()]
-              }`} style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                {featuredGames[currentSlide]?.rarity}
-              </div>
-              <h1 className="text-4xl font-bold mb-3">
-                {featuredGames[currentSlide]?.game}
-              </h1>
-              <p className="text-lg text-gray-300 mb-4 line-clamp-2">
-                {featuredGames[currentSlide]?.features?.find(f => f.label === 'Description')?.value || 'No description available'}
-              </p>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {featuredGames[currentSlide]?.features?.slice(0, 4).map((feature, index) => (
-                  <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
-                    <span className="text-base">{feature.value}</span>
-                  </div>
-                ))}
-              </div>
               <button
                 onClick={() => setSelectedGame(featuredGames[currentSlide])}
                 className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-base font-medium"
@@ -225,15 +221,6 @@ export default function Library() {
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-2">{game.game}</h3>
                 <p className="text-gray-400 text-sm mb-3 line-clamp-2">{game.description}</p>
-                <button
-                  onClick={() => {
-                    setSelectedGame(game);
-                    setShowPinPrompt(true);
-                  }}
-                  className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors duration-200"
-                >
-                  Unlock Game Details
-                </button>
               </div>
             </div>
           ))}
@@ -248,7 +235,12 @@ export default function Library() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 overflow-y-auto"
-            onClick={() => setSelectedGame(null)}
+            onClick={() => {
+              setSelectedGame(null);
+              setShowPinPrompt(false);
+              setPinInput('');
+              setPinError(false);
+            }}
           >
             <div className="min-h-screen px-4 flex items-center justify-center">
               <motion.div
