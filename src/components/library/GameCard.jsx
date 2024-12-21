@@ -23,14 +23,29 @@ export default function GameCard({ game, index }) {
         <img
           src={game.imageUrl}
           alt={game.game}
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <div className="bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-white/10">
-            <span className={`inline-block px-4 py-2 rounded-lg text-sm ${rarityConfig.bgColor} ${rarityConfig.textColor} border ${rarityConfig.borderColor} w-full text-center font-bold`}>
-              {rarityConfig.label}
-            </span>
+        
+        {/* Rarity Badge */}
+        <div className="absolute top-3 right-3">
+          <span className="px-3 py-1 rounded-md bg-black/80 text-sm font-bold uppercase tracking-wider">
+            {game.rarity}
+          </span>
+        </div>
+
+        {/* Genre Badge */}
+        <div className="absolute bottom-[60px] left-3">
+          <span className="px-3 py-1 rounded-md bg-black/80 text-sm text-white/90">
+            {game.features?.find(f => f.label === 'Genre')?.value || 'Action'}
+          </span>
+        </div>
+
+        {/* Game Info */}
+        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black to-transparent">
+          <h3 className="text-lg font-bold text-white mb-1">{game.game}</h3>
+          <div className="flex items-center justify-between text-sm text-gray-300">
+            <span>Steam</span>
+            <span>{game.releaseYear || '2024'}</span>
           </div>
         </div>
       </motion.div>
