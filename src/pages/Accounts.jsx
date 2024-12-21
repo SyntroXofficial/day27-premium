@@ -146,7 +146,7 @@ export default function Accounts() {
               <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide ${
                 rarityBgColors[featuredAccounts[currentSlide]?.rarity.toLowerCase()]
               }`} style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                {featuredAccounts[currentSlide]?.rarity}
+                {featuredAccounts[currentSlide]?.rarity.toUpperCase()}
               </div>
               <h1 className="text-4xl font-bold mb-3">
                 {featuredAccounts[currentSlide]?.name}
@@ -213,10 +213,6 @@ export default function Accounts() {
             <div
               key={account.name}
               className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[account.rarity.toLowerCase()]} ${rarityGlowColors[account.rarity.toLowerCase()]}`}
-              onClick={() => {
-                setSelectedAccount(account);
-                setShowPinPrompt(true);
-              }}
             >
               <div className="relative h-48">
                 <img
@@ -224,8 +220,8 @@ export default function Accounts() {
                   alt={account.name}
                   className="w-full h-full object-cover"
                 />
-                <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold ${rarityBgColors[account.rarity.toLowerCase()]}`}>
-                  {account.rarity}
+                <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold uppercase ${rarityBgColors[account.rarity.toLowerCase()]}`}>
+                  {account.rarity.toUpperCase()}
                 </div>
               </div>
               <div className="p-4">
@@ -248,6 +244,15 @@ export default function Accounts() {
                       <span className="text-white">{feature.value}</span>
                     </div>
                   ))}
+                  <button
+                    onClick={() => {
+                      setSelectedAccount(account);
+                      setShowPinPrompt(true);
+                    }}
+                    className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors duration-200"
+                  >
+                    Unlock Account Details
+                  </button>
                 </div>
               </div>
             </div>
