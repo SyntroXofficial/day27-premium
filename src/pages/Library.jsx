@@ -136,13 +136,23 @@ export default function Library() {
                   {featuredGames[currentSlide]?.description}
                 </p>
                 <div className="grid grid-cols-2 gap-3 mb-4 max-w-lg">
-                  {featuredGames[currentSlide]?.features?.slice(0, 4).map((feature, index) => (
+                  {[
+                    { label: 'Genre', value: featuredGames[currentSlide]?.features?.find(f => f.label === 'Genre')?.value || 'N/A' },
+                    { label: 'Hours Played', value: featuredGames[currentSlide]?.hoursPlayed || '0' },
+                    { label: 'Rarity', value: featuredGames[currentSlide]?.rarity.toUpperCase() }
+                  ].map((feature, index) => (
                     <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
                       <span className="text-gray-400 text-sm">{feature.label}</span>
                       <div className="text-white font-medium">{feature.value}</div>
                     </div>
                   ))}
                 </div>
+                <button
+                  onClick={() => setSelectedGame(featuredGames[currentSlide])}
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-base font-medium"
+                >
+                  View Details
+                </button>
               </div>
             </div>
           </motion.div>
@@ -159,12 +169,6 @@ export default function Library() {
               transition={{ duration: 0.5 }}
               className="w-[500px] pl-4"
             >
-              <button
-                onClick={() => setSelectedGame(featuredGames[currentSlide])}
-                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-base font-medium"
-              >
-                View Details
-              </button>
             </motion.div>
           </div>
         </div>
@@ -206,7 +210,8 @@ export default function Library() {
           {filteredGames.map((game) => (
             <div
               key={game.id}
-              className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[game.rarity.toLowerCase()]} ${rarityGlowColors[game.rarity.toLowerCase()]}`}
+              className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[game.rarity.toLowerCase()]} ${rarityGlowColors[game.rarity.toLowerCase()]} cursor-pointer`}
+              onClick={() => setSelectedGame(game)}
             >
               <div className="relative h-48">
                 <img
