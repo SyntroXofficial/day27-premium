@@ -91,6 +91,15 @@ export default function Library() {
     mythic: 'bg-[#000000] text-red-400'
   };
 
+  const rarityGlowColors = {
+    common: 'hover:shadow-[0_0_15px_rgba(156,163,175,0.5)] transition-shadow duration-300',
+    uncommon: 'hover:shadow-[0_0_15px_rgba(74,222,128,0.5)] transition-shadow duration-300',
+    rare: 'hover:shadow-[0_0_15px_rgba(96,165,250,0.5)] transition-shadow duration-300',
+    epic: 'hover:shadow-[0_0_15px_rgba(192,132,252,0.5)] transition-shadow duration-300',
+    legendary: 'hover:shadow-[0_0_15px_rgba(250,204,21,0.5)] transition-shadow duration-300',
+    mythic: 'hover:shadow-[0_0_15px_rgba(248,113,113,0.5)] transition-shadow duration-300'
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Featured Hero Section */}
@@ -120,7 +129,7 @@ export default function Library() {
                 />
               </div>
               {/* Dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
             </div>
           </motion.div>
         </AnimatePresence>
@@ -197,49 +206,61 @@ export default function Library() {
         </div>
 
         {/* Games Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredGames.map((game, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="relative bg-gray-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-red-500 transition-all cursor-pointer group aspect-[3/4]"
-              onClick={() => setSelectedGame(game)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
+          {filteredGames.map((game) => (
+            <div
+              key={game.id}
+              className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[game.rarity.toLowerCase()]} ${rarityGlowColors[game.rarity.toLowerCase()]}`}
+              onClick={() => {
+                setSelectedGame(game);
+                setShowPinPrompt(true);
+              }}
             >
-              <div className="relative h-full">
+              <div className="relative h-48">
                 <img
                   src={game.imageUrl}
-                  alt={game.name}
+                  alt={game.game}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    <div className={`inline-block px-3 py-1 rounded-[4px] text-sm font-bold uppercase tracking-wide ${
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <div className="flex flex-wrap gap-3 mb-4">
+                    <div className={`px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider ${
                       rarityBgColors[game.rarity.toLowerCase()]
-                    }`} style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
+                    }`}>
                       {game.rarity}
                     </div>
+                    {game.features?.slice(0, 2).map((feature, index) => (
+                      <div key={index} className="px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider bg-black/50">
+                        {feature.value}
+                      </div>
+                    ))}
                   </div>
+                  <h3 className="text-lg font-semibold mb-2">{game.game}</h3>
+                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">{game.description}</p>
                 </div>
               </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-bold mb-2 line-clamp-1">{game.game}</h3>
-                  <p className="text-sm text-gray-400 line-clamp-2">
-                    {game.features?.find(f => f.label === 'Description')?.value || 'No description available'}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {game.features?.slice(0, 2).map((feature, index) => (
-                    <span key={index} className="text-sm text-gray-400">
-                      {feature.value}
-                    </span>
+              <div className="p-4">
+                <div className="space-y-2">
+                  {game.features && game.features.map((feature, index) => (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span className="text-gray-400">{feature.label}:</span>
+                      <span className="text-white">{feature.value}</span>
+                    </div>
                   ))}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Hours Played:</span>
+                    <span className="text-white">{game.hoursPlayed || '0'}</span>
+                  </div>
+                  {game.achievements && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Achievements:</span>
+                      <span className="text-white">{game.achievements}</span>
+                    </div>
+                  )}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
