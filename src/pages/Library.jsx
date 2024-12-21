@@ -100,6 +100,15 @@ export default function Library() {
     mythic: 'hover:shadow-[0_0_15px_rgba(248,113,113,0.5)] transition-shadow duration-300'
   };
 
+  const rarityTextColors = {
+    common: 'text-gray-400',
+    uncommon: 'text-green-400',
+    rare: 'text-blue-400',
+    epic: 'text-purple-400',
+    legendary: 'text-yellow-400',
+    mythic: 'text-red-400'
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Featured Hero Section */}
@@ -123,33 +132,32 @@ export default function Library() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide mb-4 ${
-                  rarityBgColors[featuredGames[currentSlide]?.rarity.toLowerCase()]
-                }`}>
-                  {featuredGames[currentSlide]?.rarity.toUpperCase()}
-                </div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <h1 className="text-3xl font-bold mb-2">
                   {featuredGames[currentSlide]?.game}
                 </h1>
-                <p className="text-lg max-w-2xl mb-6">
+                <p className="text-base max-w-2xl mb-4 text-gray-200">
                   {featuredGames[currentSlide]?.description}
                 </p>
-                <div className="grid grid-cols-2 gap-3 mb-4 max-w-lg">
+                <div className="grid grid-cols-3 gap-2 mb-4 max-w-2xl">
                   {[
                     { label: 'Genre', value: featuredGames[currentSlide]?.features?.find(f => f.label === 'Genre')?.value || 'N/A' },
-                    { label: 'Hours Played', value: featuredGames[currentSlide]?.hoursPlayed || '0' },
-                    { label: 'Rarity', value: featuredGames[currentSlide]?.rarity.toUpperCase() }
+                    { label: 'Hours', value: featuredGames[currentSlide]?.hoursPlayed || '0' },
+                    { 
+                      label: 'Rarity', 
+                      value: featuredGames[currentSlide]?.rarity.toUpperCase(),
+                      className: `font-medium ${rarityTextColors[featuredGames[currentSlide]?.rarity.toLowerCase()]}`
+                    }
                   ].map((feature, index) => (
-                    <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
-                      <span className="text-gray-400 text-sm">{feature.label}</span>
-                      <div className="text-white font-medium">{feature.value}</div>
+                    <div key={index} className="bg-black/30 backdrop-blur-sm px-2 py-1.5 rounded-lg">
+                      <span className="text-gray-400 text-xs">{feature.label}</span>
+                      <div className={`text-sm ${feature.className || 'text-white'}`}>{feature.value}</div>
                     </div>
                   ))}
                 </div>
                 <button
                   onClick={() => setSelectedGame(featuredGames[currentSlide])}
-                  className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-base font-medium"
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
                 >
                   View Details
                 </button>
