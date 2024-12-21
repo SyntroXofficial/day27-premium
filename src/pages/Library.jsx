@@ -96,30 +96,46 @@ export default function Library() {
       {/* Featured Hero Section */}
       <div className="relative h-[600px] w-full">
         {/* Featured Game Image */}
-        <div className="absolute inset-0">
-          <div className="relative w-full h-full">
-            <div className="absolute inset-0 bg-black">
-              <img
-                src={featuredGames[currentSlide]?.imageUrl}
-                alt={featuredGames[currentSlide]?.game}
-                className="w-full h-full object-cover"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center',
-                }}
-              />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0"
+          >
+            <div className="relative w-full h-full">
+              <div className="absolute inset-0 bg-black">
+                <img
+                  src={featuredGames[currentSlide]?.imageUrl}
+                  alt={featuredGames[currentSlide]?.game}
+                  className="w-full h-full object-cover"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                />
+              </div>
+              {/* Dark gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-transparent" />
             </div>
-            {/* Dark gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-transparent" />
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
 
         {/* Content */}
         <div className="relative h-full">
           <div className="absolute inset-0 h-full flex items-center">
-            <div className="w-[500px] pl-4">
+            <motion.div 
+              key={currentSlide}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="w-[500px] pl-4"
+            >
               <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide ${
                 rarityBgColors[featuredGames[currentSlide]?.rarity.toLowerCase()]
               }`} style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
@@ -144,7 +160,7 @@ export default function Library() {
               >
                 View Details
               </button>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
