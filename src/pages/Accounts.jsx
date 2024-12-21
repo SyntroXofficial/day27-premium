@@ -303,12 +303,7 @@ export default function Accounts() {
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-300 mb-6">
-                    <span className={`px-3 py-1 rounded-lg text-sm ${rarityBgColors[selectedAccount.rarity.toLowerCase()]} ${rarityTextColors[selectedAccount.rarity.toLowerCase()]} border ${rarityColors[selectedAccount.rarity.toLowerCase()]} mr-2`}>
-                      {selectedAccount.rarity.toUpperCase()}
-                    </span>
-                  </p>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4 mt-6">
                     <button
                       onClick={() => {
                         setSelectedAccount(null);
