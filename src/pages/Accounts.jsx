@@ -331,52 +331,54 @@ export default function Accounts() {
                 <AnimatePresence>
                   {showPinPrompt && (
                     <motion.div
-                      className="fixed inset-0 bg-black"
+                      className="fixed inset-0 bg-black flex items-center justify-center"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       onClick={() => setShowPinPrompt(false)}
                     >
-                      <motion.div
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0.9 }}
-                        className="bg-black border border-gray-800 rounded-lg p-6 relative max-w-2xl w-full mx-auto"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <h3 className="text-xl font-bold mb-4">Enter Pin</h3>
-                        <div className="flex flex-col gap-4">
-                          <input
-                            type="password"
-                            value={pinInput}
-                            onChange={(e) => setPinInput(e.target.value)}
-                            className="bg-black border border-gray-800 rounded px-4 py-2 text-white focus:outline-none focus:border-red-500"
-                            placeholder="Enter pin code"
-                          />
-                          {pinError && (
-                            <p className="text-red-500 text-sm">Incorrect pin. Please try again.</p>
-                          )}
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => {
-                                setSelectedAccount(null);
-                                setShowPinPrompt(false);
-                                setPinInput('');
-                                setPinError(false);
-                              }}
-                              className="px-4 py-2 rounded bg-black border border-gray-800 text-white hover:bg-gray-900 transition-colors"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={handlePinSubmit}
-                              className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition-colors"
-                            >
-                              Submit
-                            </button>
+                      <div className="w-full max-w-md px-4">
+                        <motion.div
+                          initial={{ scale: 0.9 }}
+                          animate={{ scale: 1 }}
+                          exit={{ scale: 0.9 }}
+                          className="bg-black border border-gray-800 rounded-lg p-6 relative w-full mx-auto"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <h3 className="text-xl font-bold mb-4">Enter Pin</h3>
+                          <div className="flex flex-col gap-4">
+                            <input
+                              type="password"
+                              value={pinInput}
+                              onChange={(e) => setPinInput(e.target.value)}
+                              className="bg-black border border-gray-800 rounded px-4 py-2 text-white focus:outline-none focus:border-red-500"
+                              placeholder="Enter pin code"
+                            />
+                            {pinError && (
+                              <p className="text-red-500 text-sm">Incorrect pin. Please try again.</p>
+                            )}
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => {
+                                  setSelectedAccount(null);
+                                  setShowPinPrompt(false);
+                                  setPinInput('');
+                                  setPinError(false);
+                                }}
+                                className="px-4 py-2 rounded bg-black border border-gray-800 text-white hover:bg-gray-900 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={handlePinSubmit}
+                                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition-colors"
+                              >
+                                Submit
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
+                        </motion.div>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
