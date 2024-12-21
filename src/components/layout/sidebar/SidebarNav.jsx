@@ -16,7 +16,6 @@ const menuItems = [
   { icon: HomeIcon, label: 'Home', path: '/' },
   { icon: ListBulletIcon, label: 'Library', path: '/library' },
   { icon: PlayIcon, label: 'Streaming', path: '/streaming' },
-  { icon: ShoppingCartIcon, label: 'Methods', path: '/methods' },
   { icon: UserIcon, label: 'Accounts', path: '/accounts' },
   { icon: ExclamationTriangleIcon, label: 'Warning', path: '/warning' },
   { icon: QuestionMarkCircleIcon, label: 'FAQ', path: '/faq' }
