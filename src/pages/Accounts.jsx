@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagnifyingGlassIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 import { accounts } from '../data/accounts';
 import { services } from '../data/services';
 
@@ -300,16 +301,17 @@ export default function Accounts() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-black/75 flex items-center justify-center p-4"
-                        onClick={(e) => e.stopPropagation()}
+                        className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-[100]"
+                        onClick={() => setShowPinPrompt(false)}
                       >
                         <motion.div
                           initial={{ scale: 0.9 }}
                           animate={{ scale: 1 }}
                           exit={{ scale: 0.9 }}
                           className="bg-gray-800 rounded-lg p-6 w-full max-w-md"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <h3 className="text-xl font-bold mb-4">Enter Pin for {selectedAccount.rarity} Account</h3>
+                          <h3 className="text-xl font-bold mb-4">Enter Pin for {selectedAccount.rarity}</h3>
                           <input
                             type="password"
                             value={pinInput}
