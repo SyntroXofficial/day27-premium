@@ -280,7 +280,15 @@ export default function Library() {
                     </div>
                     <h1 className="text-4xl font-bold mb-2">{selectedGame.game}</h1>
                     <p className="text-lg text-gray-300">
-                      {selectedGame.features?.find(f => f.label === 'Description')?.value || 'No description available'}
+                      <span className={`px-3 py-1 rounded-lg text-sm ${rarityBgColors[selectedGame.rarity.toLowerCase()]} ${rarityTextColors[selectedGame.rarity.toLowerCase()]} border ${rarityColors[selectedGame.rarity.toLowerCase()]} mr-2`}>
+                        {selectedGame.rarity.toUpperCase()}
+                      </span>
+                      <span className="px-3 py-1 bg-black/50 rounded-lg text-sm text-gray-300 border border-gray-800 mr-2">
+                        GLOBAL
+                      </span>
+                      <span className="px-3 py-1 bg-black/50 rounded-lg text-sm text-gray-300 border border-gray-800">
+                        STEAM
+                      </span>
                     </p>
                   </div>
                 </div>
