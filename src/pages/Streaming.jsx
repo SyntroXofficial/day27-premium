@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MagnifyingGlassIcon, PlayIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, PlayIcon } from '@heroicons/react/24/outline';
 import MediaCard from '../components/streaming/MediaCard';
 import MediaModal from '../components/streaming/MediaModal';
 import { fetchTrending, searchMulti, fetchMoviesByGenre } from '../services/movieService';
@@ -177,18 +177,6 @@ export default function Streaming() {
     }
   }, [featuredMovies]);
 
-  const nextFeatured = () => {
-    setCurrentFeaturedIndex(prev => 
-      prev === featuredMovies.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const prevFeatured = () => {
-    setCurrentFeaturedIndex(prev => 
-      prev === 0 ? featuredMovies.length - 1 : prev - 1
-    );
-  };
-
   const currentFeatured = featuredMovies[currentFeaturedIndex];
 
   return (
@@ -244,37 +232,6 @@ export default function Streaming() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Featured Navigation */}
-        <div className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 flex justify-between items-center px-4 z-10">
-          <button 
-            onClick={prevFeatured}
-            className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-          >
-            <ChevronLeftIcon className="w-8 h-8" />
-          </button>
-          <button 
-            onClick={nextFeatured}
-            className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-          >
-            <ChevronRightIcon className="w-8 h-8" />
-          </button>
-        </div>
-
-        {/* Featured Indicators */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 p-4 flex justify-center gap-2">
-          {featuredMovies.map((movie, index) => (
-            <button
-              key={movie.id}
-              onClick={() => setCurrentFeaturedIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentFeaturedIndex 
-                  ? 'bg-red-500 scale-125' 
-                  : 'bg-gray-400 hover:bg-gray-300'
-              }`}
-            />
-          ))}
-        </div>
       </div>
 
       {/* Categories and Search */}
@@ -300,63 +257,49 @@ export default function Streaming() {
                 className="bg-black text-white px-4 py-2 rounded-lg border border-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none min-w-[150px]"
               >
                 <option value="">All Genres</option>
-                {genres
-                  .filter(genre => genre.name) // Only show genres with names
-                  .sort((a, b) => a.name.localeCompare(b.name)) // Sort alphabetically
-                  .map((genre) => (
-                    <option key={genre.id} value={genre.id}>
-                      {genre.name}
-                    </option>
-                  ))}
+                {genres.map((genre) => (
+                  <option key={genre.id} value={genre.id}>
+                    {genre.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="relative w-full md:w-auto">
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  if (!e.target.value) {
-                    // Reset to initial state when search is cleared
-                    setSelectedCategory('all');
-                    setSelectedGenre('');
-                  }
-                }}
-                placeholder="Search movies & TV shows..."
-                className="w-full md:w-[300px] bg-black text-white px-4 py-2 rounded-lg border border-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search movies, TV shows..."
+                className="w-full md:w-[300px] bg-black text-white pl-10 pr-4 py-2 rounded-lg border border-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none"
               />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content Grid */}
-      <div className="bg-black min-h-screen">
-        <div className="max-w-[2000px] mx-auto px-6 py-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {loading ? (
-              Array.from({ length: 12 }).map((_, index) => (
-                <div key={index} className="aspect-[2/3] rounded-xl bg-gray-800 animate-pulse" />
-              ))
-            ) : (
-              media
-                .filter(item => item.poster_path)
-                .map(item => (
-                  <MediaCard
-                    key={item.id}
-                    media={item}
-                    onClick={() => setSelectedMedia(item)}
-                  />
-                ))
-            )}
-          </div>
+      {/* Media Grid */}
+      <div className="max-w-[2000px] mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+          {media.map((item) => (
+            <MediaCard
+              key={item.id}
+              media={item}
+              onClick={() => setSelectedMedia(item)}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Modal */}
-      {selectedMedia && (
-        <MediaModal media={selectedMedia} onClose={() => setSelectedMedia(null)} />
-      )}
+      {/* Media Modal */}
+      <AnimatePresence>
+        {selectedMedia && (
+          <MediaModal
+            media={selectedMedia}
+            onClose={() => setSelectedMedia(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
