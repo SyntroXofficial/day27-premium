@@ -106,7 +106,7 @@ export default function Accounts() {
             <div className="relative w-full h-full">
               <div className="absolute inset-0 bg-black">
                 <img
-                  src={featuredAccounts[currentSlide]?.image}
+                  src={featuredAccounts[currentSlide]?.imageUrl}
                   alt={featuredAccounts[currentSlide]?.name}
                   className="w-full h-full object-cover"
                   style={{
