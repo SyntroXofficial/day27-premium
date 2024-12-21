@@ -264,20 +264,7 @@ export default function Library() {
                     alt={selectedGame.game}
                     className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-8">
-                    <div className="flex flex-wrap gap-3 mb-4">
-                      <div className={`px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider ${
-                        rarityBgColors[selectedGame.rarity.toLowerCase()]
-                      }`}>
-                        {selectedGame.rarity}
-                      </div>
-                      {selectedGame.features?.slice(0, 2).map((feature, index) => (
-                        <div key={index} className="px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider bg-black/50">
-                          {feature.value}
-                        </div>
-                      ))}
-                    </div>
                     <h1 className="text-4xl font-bold mb-2">{selectedGame.game}</h1>
                     <p className="text-lg text-gray-300">
                       <span className={`px-3 py-1 rounded-lg text-sm ${rarityBgColors[selectedGame.rarity.toLowerCase()]} ${rarityTextColors[selectedGame.rarity.toLowerCase()]} border ${rarityColors[selectedGame.rarity.toLowerCase()]} mr-2`}>
