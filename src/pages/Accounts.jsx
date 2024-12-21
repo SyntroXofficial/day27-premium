@@ -137,7 +137,7 @@ export default function Accounts() {
                   {[
                     { label: 'Type', value: featuredAccounts[currentSlide]?.type },
                     { label: 'Status', value: featuredAccounts[currentSlide]?.inStock ? 'In Stock' : 'Out of Stock' },
-                    { label: 'Region', value: featuredAccounts[currentSlide]?.region || 'Global' }
+                    { label: 'Rarity', value: featuredAccounts[currentSlide]?.rarity.toUpperCase() }
                   ].map((feature, index) => (
                     <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
                       <span className="text-gray-400 text-sm">{feature.label}</span>
@@ -145,6 +145,12 @@ export default function Accounts() {
                     </div>
                   ))}
                 </div>
+                <button
+                  onClick={() => setSelectedAccount(featuredAccounts[currentSlide])}
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-base font-medium"
+                >
+                  View Details
+                </button>
               </div>
             </div>
           </motion.div>
@@ -202,7 +208,8 @@ export default function Accounts() {
           {filteredAccounts.map((account) => (
             <div
               key={account.name}
-              className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[account.rarity.toLowerCase()]} ${rarityGlowColors[account.rarity.toLowerCase()]}`}
+              className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[account.rarity.toLowerCase()]} ${rarityGlowColors[account.rarity.toLowerCase()]} cursor-pointer`}
+              onClick={() => setSelectedAccount(account)}
             >
               <div className="relative h-48">
                 <img
