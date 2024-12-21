@@ -211,10 +211,6 @@ export default function Library() {
             <div
               key={game.id}
               className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[game.rarity.toLowerCase()]} ${rarityGlowColors[game.rarity.toLowerCase()]}`}
-              onClick={() => {
-                setSelectedGame(game);
-                setShowPinPrompt(true);
-              }}
             >
               <div className="relative h-48">
                 <img
@@ -222,43 +218,22 @@ export default function Library() {
                   alt={game.game}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <div className="flex flex-wrap gap-3 mb-4">
-                    <div className={`px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider ${
-                      rarityBgColors[game.rarity.toLowerCase()]
-                    }`}>
-                      {game.rarity}
-                    </div>
-                    {game.features?.slice(0, 2).map((feature, index) => (
-                      <div key={index} className="px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider bg-black/50">
-                        {feature.value}
-                      </div>
-                    ))}
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">{game.game}</h3>
-                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">{game.description}</p>
+                <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold uppercase ${rarityBgColors[game.rarity.toLowerCase()]}`}>
+                  {game.rarity.toUpperCase()}
                 </div>
               </div>
               <div className="p-4">
-                <div className="space-y-2">
-                  {game.features && game.features.map((feature, index) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <span className="text-gray-400">{feature.label}:</span>
-                      <span className="text-white">{feature.value}</span>
-                    </div>
-                  ))}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Hours Played:</span>
-                    <span className="text-white">{game.hoursPlayed || '0'}</span>
-                  </div>
-                  {game.achievements && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Achievements:</span>
-                      <span className="text-white">{game.achievements}</span>
-                    </div>
-                  )}
-                </div>
+                <h3 className="text-lg font-semibold mb-2">{game.game}</h3>
+                <p className="text-gray-400 text-sm mb-3 line-clamp-2">{game.description}</p>
+                <button
+                  onClick={() => {
+                    setSelectedGame(game);
+                    setShowPinPrompt(true);
+                  }}
+                  className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors duration-200"
+                >
+                  Unlock Game Details
+                </button>
               </div>
             </div>
           ))}
