@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MagnifyingGlassIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { accounts } from '../data/accounts';
 import { services } from '../data/services';
@@ -94,63 +94,77 @@ export default function Accounts() {
       {/* Featured Hero Section */}
       <div className="relative h-[600px] w-full">
         {/* Featured Account Image */}
-        <div className="absolute inset-0">
-          <div className="relative w-full h-full">
-            <div className="absolute inset-0 bg-black">
-              <img
-                src={featuredAccounts[currentSlide]?.image}
-                alt={featuredAccounts[currentSlide]?.name}
-                className="w-full h-full object-cover opacity-50"
-              />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0"
+          >
+            <div className="relative w-full h-full">
+              <div className="absolute inset-0 bg-black">
+                <img
+                  src={featuredAccounts[currentSlide]?.image}
+                  alt={featuredAccounts[currentSlide]?.name}
+                  className="w-full h-full object-cover"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                />
+              </div>
+              {/* Dark gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-transparent" />
             </div>
-          </div>
-        </div>
-
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+          </motion.div>
+        </AnimatePresence>
 
         {/* Content */}
-        <div className="absolute bottom-0 left-0 right-0 p-8">
-          <div className="container mx-auto">
-            <motion.div
+        <div className="relative h-full">
+          <div className="absolute inset-0 h-full flex items-center">
+            <motion.div 
               key={currentSlide}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="max-w-3xl"
+              className="w-[500px] pl-4"
             >
-              <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4 ${rarityBgColors[featuredAccounts[currentSlide]?.rarity.toLowerCase()]}`}>
+              <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide ${
+                rarityBgColors[featuredAccounts[currentSlide]?.rarity.toLowerCase()]
+              }`} style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
                 {featuredAccounts[currentSlide]?.rarity}
               </div>
-              <h1 className="text-4xl font-bold mb-4">{featuredAccounts[currentSlide]?.name}</h1>
-              <p className="text-lg text-gray-300 mb-6">{featuredAccounts[currentSlide]?.description}</p>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setSelectedAccount(featuredAccounts[currentSlide]);
-                    setShowPinPrompt(true);
-                  }}
-                  className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition"
-                >
-                  Access Account
-                </button>
+              <h1 className="text-4xl font-bold mb-3">
+                {featuredAccounts[currentSlide]?.name}
+              </h1>
+              <p className="text-lg text-gray-300 mb-4 line-clamp-2">
+                {featuredAccounts[currentSlide]?.description}
+              </p>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {[
+                  { label: 'Type', value: featuredAccounts[currentSlide]?.type },
+                  { label: 'Status', value: featuredAccounts[currentSlide]?.inStock ? 'In Stock' : 'Out of Stock' },
+                  { label: 'Price', value: featuredAccounts[currentSlide]?.price },
+                  { label: 'Region', value: featuredAccounts[currentSlide]?.region || 'Global' }
+                ].map((feature, index) => (
+                  <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
+                    <span className="text-base">{feature.value}</span>
+                  </div>
+                ))}
               </div>
+              <button
+                onClick={() => setSelectedAccount(featuredAccounts[currentSlide])}
+                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-base font-medium"
+              >
+                View Details
+              </button>
             </motion.div>
           </div>
-        </div>
-
-        {/* Slide Controls */}
-        <div className="absolute bottom-4 right-4 flex gap-2">
-          {featuredAccounts.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full ${
-                currentSlide === index ? 'bg-white' : 'bg-gray-500'
-              }`}
-            />
-          ))}
         </div>
       </div>
 
