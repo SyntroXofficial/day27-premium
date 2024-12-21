@@ -79,6 +79,15 @@ export default function Accounts() {
     mythic: 'border-red-400 animate-pulse-slow shadow-[0_0_20px_rgba(248,113,113,0.3)]'
   };
 
+  const rarityGlowColors = {
+    common: 'hover:shadow-[0_0_15px_rgba(156,163,175,0.5)] transition-shadow duration-300',
+    uncommon: 'hover:shadow-[0_0_15px_rgba(74,222,128,0.5)] transition-shadow duration-300',
+    rare: 'hover:shadow-[0_0_15px_rgba(96,165,250,0.5)] transition-shadow duration-300',
+    epic: 'hover:shadow-[0_0_15px_rgba(192,132,252,0.5)] transition-shadow duration-300',
+    legendary: 'hover:shadow-[0_0_15px_rgba(250,204,21,0.5)] transition-shadow duration-300',
+    mythic: 'hover:shadow-[0_0_15px_rgba(248,113,113,0.5)] transition-shadow duration-300'
+  };
+
   // Update the rarity colors with new dark theme styling
   const rarityBgColors = {
     common: 'bg-[#000000] text-gray-300',
@@ -118,7 +127,7 @@ export default function Accounts() {
                 />
               </div>
               {/* Dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
             </div>
           </motion.div>
         </AnimatePresence>
@@ -149,7 +158,6 @@ export default function Accounts() {
                 {[
                   { label: 'Type', value: featuredAccounts[currentSlide]?.type },
                   { label: 'Status', value: featuredAccounts[currentSlide]?.inStock ? 'In Stock' : 'Out of Stock' },
-                  { label: 'Price', value: featuredAccounts[currentSlide]?.price },
                   { label: 'Region', value: featuredAccounts[currentSlide]?.region || 'Global' }
                 ].map((feature, index) => (
                   <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
@@ -201,44 +209,46 @@ export default function Accounts() {
 
         {/* Accounts Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredAccounts.map((account, index) => (
+          {filteredAccounts.map((account) => (
             <div
-              key={index}
-              className="relative aspect-[3/4] bg-gray-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-red-500 transition-all cursor-pointer group"
-              onClick={() => setSelectedAccount(account)}
+              key={account.name}
+              className={`bg-[#0a0a0a] rounded-lg overflow-hidden border ${rarityColors[account.rarity.toLowerCase()]} ${rarityGlowColors[account.rarity.toLowerCase()]}`}
+              onClick={() => {
+                setSelectedAccount(account);
+                setShowPinPrompt(true);
+              }}
             >
-              <div className="relative h-full">
+              <div className="relative h-48">
                 <img
                   src={account.imageUrl}
                   alt={account.name}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    <div className={`inline-block px-3 py-1 rounded-[4px] text-sm font-semibold uppercase tracking-wide ${
-                      rarityBgColors[account.rarity.toLowerCase()]
-                    }`} style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                      {account.rarity}
-                    </div>
-                    {account.inStock ? (
-                      <div className="inline-block px-3 py-1 rounded-[4px] text-sm font-semibold uppercase tracking-wide bg-[#000000] text-green-400" style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                        In Stock
-                      </div>
-                    ) : (
-                      <div className="inline-block px-3 py-1 rounded-[4px] text-sm font-semibold uppercase tracking-wide bg-[#000000] text-red-400" style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                        Out of Stock
-                      </div>
-                    )}
-                  </div>
+                <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold ${rarityBgColors[account.rarity.toLowerCase()]}`}>
+                  {account.rarity}
                 </div>
               </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-bold mb-2 line-clamp-1">{account.name}</h3>
-                  <p className="text-sm text-gray-400 line-clamp-2">{account.description}</p>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-2">{account.name}</h3>
+                <p className="text-gray-400 text-sm mb-3 line-clamp-2">{account.description}</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Type:</span>
+                    <span className="text-white">{account.type}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Status:</span>
+                    <span className={account.inStock ? 'text-green-400' : 'text-red-400'}>
+                      {account.inStock ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                  </div>
+                  {account.features && account.features.map((feature, index) => (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span className="text-gray-400">{feature.label}:</span>
+                      <span className="text-white">{feature.value}</span>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-sm text-gray-400 mt-2">{account.type}</p>
               </div>
             </div>
           ))}
