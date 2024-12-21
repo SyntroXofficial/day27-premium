@@ -113,21 +113,39 @@ export default function Accounts() {
             className="absolute inset-0"
           >
             <div className="relative w-full h-full">
-              <div className="absolute inset-0 bg-black">
+              <div className="absolute inset-0">
                 <img
                   src={featuredAccounts[currentSlide]?.imageUrl}
                   alt={featuredAccounts[currentSlide]?.name}
                   className="w-full h-full object-cover"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                  }}
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
               </div>
-              {/* Dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide mb-4 ${
+                  rarityBgColors[featuredAccounts[currentSlide]?.rarity.toLowerCase()]
+                }`}>
+                  {featuredAccounts[currentSlide]?.rarity.toUpperCase()}
+                </div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                  {featuredAccounts[currentSlide]?.name}
+                </h1>
+                <p className="text-lg max-w-2xl mb-6">
+                  {featuredAccounts[currentSlide]?.description}
+                </p>
+                <div className="grid grid-cols-2 gap-3 mb-4 max-w-lg">
+                  {[
+                    { label: 'Type', value: featuredAccounts[currentSlide]?.type },
+                    { label: 'Status', value: featuredAccounts[currentSlide]?.inStock ? 'In Stock' : 'Out of Stock' },
+                    { label: 'Region', value: featuredAccounts[currentSlide]?.region || 'Global' }
+                  ].map((feature, index) => (
+                    <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
+                      <span className="text-gray-400 text-sm">{feature.label}</span>
+                      <div className="text-white font-medium">{feature.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -143,34 +161,6 @@ export default function Accounts() {
               transition={{ duration: 0.5 }}
               className="w-[500px] pl-4"
             >
-              <div className={`inline-block px-4 py-1.5 rounded-[4px] text-sm font-semibold uppercase tracking-wide ${
-                rarityBgColors[featuredAccounts[currentSlide]?.rarity.toLowerCase()]
-              }`} style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                {featuredAccounts[currentSlide]?.rarity.toUpperCase()}
-              </div>
-              <h1 className="text-4xl font-bold mb-3">
-                {featuredAccounts[currentSlide]?.name}
-              </h1>
-              <p className="text-lg text-gray-300 mb-4 line-clamp-2">
-                {featuredAccounts[currentSlide]?.description}
-              </p>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {[
-                  { label: 'Type', value: featuredAccounts[currentSlide]?.type },
-                  { label: 'Status', value: featuredAccounts[currentSlide]?.inStock ? 'In Stock' : 'Out of Stock' },
-                  { label: 'Region', value: featuredAccounts[currentSlide]?.region || 'Global' }
-                ].map((feature, index) => (
-                  <div key={index} className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
-                    <span className="text-base">{feature.value}</span>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => setSelectedAccount(featuredAccounts[currentSlide])}
-                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-base font-medium"
-              >
-                View Details
-              </button>
             </motion.div>
           </div>
         </div>
@@ -244,15 +234,6 @@ export default function Accounts() {
                       <span className="text-white">{feature.value}</span>
                     </div>
                   ))}
-                  <button
-                    onClick={() => {
-                      setSelectedAccount(account);
-                      setShowPinPrompt(true);
-                    }}
-                    className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors duration-200"
-                  >
-                    Unlock Account Details
-                  </button>
                 </div>
               </div>
             </div>
@@ -268,7 +249,12 @@ export default function Accounts() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 overflow-y-auto"
-            onClick={() => setSelectedAccount(null)}
+            onClick={() => {
+              setSelectedAccount(null);
+              setShowPinPrompt(false);
+              setPinInput('');
+              setPinError(false);
+            }}
           >
             <div className="min-h-screen px-4 flex items-center justify-center">
               <motion.div
@@ -321,7 +307,10 @@ export default function Accounts() {
                       Close
                     </button>
                     <button
-                      onClick={() => setShowPinPrompt(true)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowPinPrompt(true);
+                      }}
                       className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
                     >
                       Unlock Account Details
