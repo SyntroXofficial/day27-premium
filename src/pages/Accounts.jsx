@@ -291,10 +291,11 @@ export default function Accounts() {
                     <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm backdrop-blur-sm">
                       {selectedAccount.type}
                     </span>
-                    <span className={`px-3 py-1 rounded-full text-sm backdrop-blur-sm ${
-                      rarityBgColors[selectedAccount.rarity.toLowerCase()]
-                    }`}>
+                    <span className={`px-3 py-1 rounded-lg text-sm ${rarityBgColors[selectedAccount.rarity.toLowerCase()]} ${rarityTextColors[selectedAccount.rarity.toLowerCase()]} border ${rarityColors[selectedAccount.rarity.toLowerCase()]}`}>
                       {selectedAccount.rarity.toUpperCase()}
+                    </span>
+                    <span className="px-3 py-1 bg-black/50 rounded-lg text-sm text-gray-300 border border-gray-800">
+                      GLOBAL
                     </span>
                     {selectedAccount.inStock && (
                       <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm backdrop-blur-sm">
@@ -305,9 +306,6 @@ export default function Accounts() {
                   <p className="text-gray-300 mb-6">
                     <span className={`px-3 py-1 rounded-lg text-sm ${rarityBgColors[selectedAccount.rarity.toLowerCase()]} ${rarityTextColors[selectedAccount.rarity.toLowerCase()]} border ${rarityColors[selectedAccount.rarity.toLowerCase()]} mr-2`}>
                       {selectedAccount.rarity.toUpperCase()}
-                    </span>
-                    <span className="px-3 py-1 bg-black/50 rounded-lg text-sm text-gray-300 border border-gray-800">
-                      GLOBAL
                     </span>
                   </p>
                   <div className="grid grid-cols-2 gap-4">
