@@ -238,10 +238,10 @@ export default function Library() {
       <AnimatePresence>
         {selectedGame && (
           <motion.div
+            className="fixed inset-0 bg-black"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 overflow-y-auto"
             onClick={() => {
               setSelectedGame(null);
               setShowPinPrompt(false);
@@ -249,13 +249,13 @@ export default function Library() {
               setPinError(false);
             }}
           >
-            <div className="min-h-screen px-4 flex items-center justify-center">
+            <div className="min-h-screen px-4 text-center flex items-center justify-center">
               <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                className="bg-black border border-gray-800 rounded-lg p-6 relative max-w-2xl w-full mx-auto"
                 onClick={(e) => e.stopPropagation()}
-                className="relative max-w-4xl w-full bg-gray-900 rounded-2xl overflow-hidden"
               >
                 {/* Modal Image */}
                 <div className="relative h-[400px]">
@@ -326,10 +326,10 @@ export default function Library() {
       <AnimatePresence>
         {showPinPrompt && (
           <motion.div
+            className="fixed inset-0 bg-black"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-[100]"
             onClick={() => setShowPinPrompt(false)}
           >
             <motion.div
