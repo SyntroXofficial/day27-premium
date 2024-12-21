@@ -318,14 +318,15 @@ export default function Library() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/75 flex items-center justify-center p-4"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-[100]"
+            onClick={() => setShowPinPrompt(false)}
           >
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
               className="bg-gray-800 rounded-lg p-6 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-xl font-bold mb-4">Enter Pin for {selectedGame.rarity}</h3>
               <input
