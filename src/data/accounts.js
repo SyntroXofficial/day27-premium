@@ -189,7 +189,7 @@ export const accounts = [
     type: 'Streaming',
     link: 'https://mega.nz/folder/example12',
     pin: '2716',
-    imageUrl: 'https://wallpapercave.com/wp/wp8338679.jpg'
+    imageUrl: 'https://m.media-amazon.com/images/G/01/primevideo/seo/primevideo-seo-logo.png'
   },
   {
     id: 'duolingo',
