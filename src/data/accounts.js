@@ -367,6 +367,6 @@ export const accounts = [
     type: 'Email',
     link: 'https://mega.nz/folder/example23',
     pin: '1111',
-    imageUrl: 'https://wallpapercave.com/wp/wp4364221.jpg'
+    imageUrl: 'https://www.windowslatest.com/wp-content/uploads/2024/11/Windows-11s-new-Outlook-to-get-None-color-category-design-update.jpg'
   }
 ];
