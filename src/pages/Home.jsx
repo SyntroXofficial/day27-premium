@@ -50,10 +50,10 @@ const features = [
 ];
 
 const stats = [
-  { value: "10K+", label: "Premium Accounts" },
-  { value: "5K+", label: "Games Available" },
+  { value: "500K+", label: "Premium Accounts" },
+  { value: "50+", label: "Games Available" },
   { value: "24/7", label: "Support" },
-  { value: "99%", label: "Satisfaction Rate" }
+  { value: "97%", label: "Satisfaction Rate" }
 ];
 
 export default function Home() {
