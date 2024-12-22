@@ -239,7 +239,7 @@ export const accounts = [
     type: 'Gaming',
     link: 'https://mega.nz/folder/example15',
     pin: '4617',
-    imageUrl: 'https://images.hdqwalls.com/download/xbox-game-pass-5k-5t-2560x1440.jpg'
+    imageUrl: 'https://www.stuff.tv/wp-content/uploads/sites/2/2023/04/Game-Pass.png'
   },
   {
     id: 'hbomax',
@@ -255,7 +255,7 @@ export const accounts = [
     type: 'Streaming',
     link: 'https://mega.nz/folder/example16',
     pin: '4617',
-    imageUrl: 'https://images.hdqwalls.com/download/house-of-the-dragon-4k-2022-ld-2560x1440.jpg'
+    imageUrl: 'https://newmoney.ro/wp-content/uploads/2021/06/hbo-max.png'
   },
   {
     id: 'vpn',
@@ -271,7 +271,7 @@ export const accounts = [
     type: 'VPN',
     link: 'https://mega.nz/folder/example17',
     pin: '4617',
-    imageUrl: 'https://wallpaperaccess.com/full/2215510.jpg'
+    imageUrl: 'https://www.it-daily.net/wp-content/uploads/2023/12/VPN_shutterstock_1564127779_1920x1080.jpg'
   },
   {
     id: 'iptv',
@@ -287,7 +287,7 @@ export const accounts = [
     type: 'IPTV',
     link: 'https://mega.nz/folder/example18',
     pin: '4617',
-    imageUrl: 'https://wallpapercave.com/wp/wp7631173.jpg'
+    imageUrl: 'https://buy-iptvsmarterspro.myshopify.com/cdn/shop/files/iptv_smarters_pro.jpg?v=1733761635'
   },
   {
     id: 'disney',
@@ -303,7 +303,7 @@ export const accounts = [
     type: 'Streaming',
     link: 'https://mega.nz/folder/example19',
     pin: '8293',
-    imageUrl: 'https://images.hdqwalls.com/download/disney-plus-5k-9e-2560x1440.jpg'
+    imageUrl: 'https://espnpressroom.com/caribbean/files/2024/06/Disney-Caribbean-scaled.jpg'
   },
   {
     id: 'crunchyroll',
@@ -319,7 +319,7 @@ export const accounts = [
     type: 'Streaming',
     link: 'https://mega.nz/folder/example20',
     pin: '8293',
-    imageUrl: 'https://images.hdqwalls.com/download/anime-city-street-5k-9v-2560x1440.jpg'
+    imageUrl: 'https://assets.aboutamazon.com/dims4/default/5ad65cc/2147483647/strip/true/crop/1920x960+0+60/resize/1200x600!/quality/90/?url=https%3A%2F%2Famazon-blogs-brightspot.s3.amazonaws.com%2Ff8%2F2a%2Fe21459814491b9aac0134bfffaf8%2Fcr-1920x1080.jpg'
   },
   {
     id: 'proxy',
@@ -335,7 +335,7 @@ export const accounts = [
     type: 'Security',
     link: 'https://mega.nz/folder/example21',
     pin: '8293',
-    imageUrl: 'https://wallpaperaccess.com/full/1428068.jpg'
+    imageUrl: 'https://vietsocks.com/wp-content/uploads/2021/03/Proxy-dung-de-lam-gi.jpg'
   },
   {
     id: 'lol',
@@ -351,7 +351,7 @@ export const accounts = [
     type: 'Gaming',
     link: 'https://mega.nz/folder/example22',
     pin: '2222',
-    imageUrl: 'https://images.hdqwalls.com/download/league-of-legends-4k-2020-km-2560x1440.jpg'
+    imageUrl: 'https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/3705653167ef8f43acdc03fb2f0a469d5b3086fd-1920x1080.jpg'
   },
   {
     id: 'outlook',
