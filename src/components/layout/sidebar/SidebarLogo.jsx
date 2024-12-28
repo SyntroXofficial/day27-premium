@@ -8,9 +8,9 @@ export default function SidebarLogo({ isCollapsed }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700"
+        className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark"
       >
-        Day27
+        ASHARI
       </motion.h1>
     )
   );
