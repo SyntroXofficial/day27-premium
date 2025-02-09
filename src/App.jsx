@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -15,13 +15,18 @@ import Important from './pages/Important';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminGames from './pages/AdminGames';
+import AdminGenerator from './pages/AdminGenerator';
+import AdminUsers from './pages/AdminUsers';
+import AdminAnalytics from './pages/AdminAnalytics';
+import AdminReports from './pages/AdminReports';
 import Community from './pages/Community';
-import Player from './pages/Player';
 import PageTransition from './components/PageTransition';
 import TransitionLayout from './components/TransitionLayout';
 import { auth, db } from './firebase';
 import { doc, updateDoc, serverTimestamp, increment, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { FaExclamationTriangle, FaYoutube } from 'react-icons/fa';
 
 function PrivateRoute({ children }) {
   const location = useLocation();
@@ -93,6 +98,44 @@ function AdminRoute({ children }) {
   }
 
   return children;
+}
+
+// Critical Info Button Component
+function CriticalInfoButton() {
+  const location = useLocation();
+  const isImportantPage = location.pathname === '/important';
+
+  if (isImportantPage) return null;
+
+  return (
+    <Link
+      to="/important"
+      className="fixed top-20 right-4 z-50 flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg transition-all duration-300 group text-sm"
+    >
+      <FaExclamationTriangle className="group-hover:rotate-12 transition-transform duration-300" />
+      <span className="ml-2">CRITICAL</span>
+    </Link>
+  );
+}
+
+// YouTube Button Component
+function YouTubeButton() {
+  const location = useLocation();
+  const isYoutubePage = location.pathname === '/youtube';
+
+  if (isYoutubePage) return null;
+
+  return (
+    <Link
+      to="https://www.youtube.com/channel/UC9kPS24Rg7OmmM5u00huFBA"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="fixed top-32 right-4 z-50 flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-all duration-300 group text-sm"
+    >
+      <FaYoutube className="group-hover:scale-110 transition-transform duration-300" />
+      <span className="ml-2">YOUTUBE</span>
+    </Link>
+  );
 }
 
 function App() {
@@ -208,6 +251,8 @@ function App() {
       <div className={`min-h-screen bg-black transition-all duration-300 ${isSidebarOpen ? 'pl-16' : ''}`}>
         <main className="relative">
           <AnimatedRoutes />
+          <CriticalInfoButton />
+          <YouTubeButton />
         </main>
         <Navbar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
       </div>
@@ -312,11 +357,39 @@ function AnimatedRoutes() {
               </AdminRoute>
             </PageTransition>
           } />
-          <Route path="/player/:type/:id" element={
+          <Route path="/admin/games" element={
             <PageTransition>
-              <PrivateRoute>
-                <Player />
-              </PrivateRoute>
+              <AdminRoute>
+                <AdminGames />
+              </AdminRoute>
+            </PageTransition>
+          } />
+          <Route path="/admin/generator" element={
+            <PageTransition>
+              <AdminRoute>
+                <AdminGenerator />
+              </AdminRoute>
+            </PageTransition>
+          } />
+          <Route path="/admin/users" element={
+            <PageTransition>
+              <AdminRoute>
+                <AdminUsers />
+              </AdminRoute>
+            </PageTransition>
+          } />
+          <Route path="/admin/analytics" element={
+            <PageTransition>
+              <AdminRoute>
+                <AdminAnalytics />
+              </AdminRoute>
+            </PageTransition>
+          } />
+          <Route path="/admin/reports" element={
+            <PageTransition>
+              <AdminRoute>
+                <AdminReports />
+              </AdminRoute>
             </PageTransition>
           } />
         </Routes>
