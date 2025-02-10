@@ -20,7 +20,6 @@ import AdminGenerator from './pages/AdminGenerator';
 import AdminUsers from './pages/AdminUsers';
 import AdminAnalytics from './pages/AdminAnalytics';
 import AdminReports from './pages/AdminReports';
-import Community from './pages/Community';
 import PageTransition from './components/PageTransition';
 import TransitionLayout from './components/TransitionLayout';
 import { auth, db } from './firebase';
@@ -340,13 +339,6 @@ function AnimatedRoutes() {
             <PageTransition>
               <PrivateRoute>
                 <Search />
-              </PrivateRoute>
-            </PageTransition>
-          } />
-          <Route path="/community" element={
-            <PageTransition>
-              <PrivateRoute>
-                <Community />
               </PrivateRoute>
             </PageTransition>
           } />

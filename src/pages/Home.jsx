@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   FaGamepad, FaPlay, FaRandom, FaExclamationTriangle, FaSignInAlt, 
-  FaComments, FaStar, FaCalendar, FaUsers, FaUserCheck, FaFilm, 
+  FaStar, FaCalendar, FaUsers, FaUserCheck, FaFilm, 
   FaTv, FaBolt, FaCrown, FaRocket, FaCircle, FaClock, FaGlobe,
   FaInfoCircle, FaUserShield
 } from 'react-icons/fa';
@@ -203,7 +203,7 @@ function Home() {
 
           {/* Quick Access Grid */}
           <motion.div 
-            className="grid grid-cols-4 gap-6 mb-12"
+            className="grid grid-cols-3 gap-6 mb-12"
             variants={container}
             initial="hidden"
             animate="show"
@@ -247,20 +247,6 @@ function Home() {
                   </div>
                 </div>
                 <p className="text-sm text-gray-400">Access premium accounts and services</p>
-              </div>
-            </Link>
-
-            <Link to={user ? "/community" : "/login"} className="group">
-              <div className="bg-gradient-to-br from-yellow-500/10 to-amber-500/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/30 transition-all duration-300 h-full">
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="p-3 bg-gradient-to-br from-yellow-500 to-amber-500 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <FaComments className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">Community</h3>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-400">Join the conversation with fellow members</p>
               </div>
             </Link>
           </motion.div>

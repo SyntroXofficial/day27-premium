@@ -42,7 +42,6 @@ function Navbar() {
       { path: '/streaming', icon: FaPlay, label: 'Streaming' },
       { path: '/games', icon: FaGamepad, label: 'Games' },
       { path: '/generator', icon: FaRandom, label: 'Generator' },
-      { path: '/community', icon: FaComments, label: 'Community' },
       { path: '/important', icon: FaExclamationTriangle, label: 'Important', highlight: true },
     ] : []),
     ...(isAdmin ? [{ path: '/admin', icon: FaUserShield, label: 'Admin' }] : [])
