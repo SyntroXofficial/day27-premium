@@ -6,7 +6,7 @@ import {
   FaUserShield, FaComments, FaSignInAlt, FaUser,
   FaBars, FaTimes, FaChevronRight, FaExclamationTriangle
 } from 'react-icons/fa';
-import { auth, db } from '../supabase';
+import { supabase } from '../supabase';
 
 function Navbar() {
   const location = useLocation();
@@ -17,7 +17,7 @@ function Navbar() {
   const [profileUrl, setProfileUrl] = useState('');
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [userDoc, setUserDoc] = useState(null);
-  const user = auth.user();
+  const [user, setUser] = useState(null);
   const isAdmin = user?.email === 'andres_rios_xyz@outlook.com';
 
   useEffect(() => {
@@ -30,56 +30,173 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (user) {
-        const { data, error } = await db
-          .from('users')
-          .select()
-          .eq('id', user.id);
+    // Get initial user
+    const getInitialUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    getInitialUser();
 
-        if (error) throw error;
-        if (data && data.length > 0) {
-          setUserDoc(data[0]);
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    const fetchUserData = async () => {
+      if (!user) {
+        setUserDoc(null);
+        return;
+      }
+
+      try {
+        // Initial delay to allow trigger to work
+        if (retryCount === 0) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
+
+        // First, check if user exists by username
+        const { data: existingUser, error: searchError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (searchError) {
+          console.error('Error searching for user:', searchError);
+          return;
+        }
+
+        // If user doesn't exist, create it
+        if (!existingUser) {
+          const { error: insertError } = await supabase
+            .from('users')
+            .insert([
+              {
+                id: user.id,
+                email: user.email,
+                username: user.email.split('@')[0],
+                display_name: user.email.split('@')[0],
+                last_login: new Date().toISOString(),
+                last_active: new Date().toISOString()
+              }
+            ]);
+
+          if (insertError) {
+            console.error('Error creating user:', insertError);
+            return;
+          }
+
+          // Wait a bit for the insert to complete
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        // Now fetch the user data
+        const { data: userData, error: fetchError } = await supabase
+          .from('users')
+          .select('id, email, username, display_name, profile_pic_url, last_login, last_active, created_at')
+          .eq('id', user.id)
+          .single();
+
+        if (fetchError) {
+          if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`Retry attempt ${retryCount} of ${maxRetries}...`);
+            setTimeout(fetchUserData, 2000);
+            return;
+          }
+          console.error('Error fetching user data:', fetchError);
+          return;
+        }
+
+        if (userData) {
+          setUserDoc(userData);
+          // Update last_active
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({ last_active: new Date().toISOString() })
+            .eq('id', user.id);
+
+          if (updateError) {
+            console.error('Error updating last_active:', updateError);
+          }
+        }
+      } catch (error) {
+        console.error('Error in user data flow:', error);
       }
     };
 
-    fetchUserData();
+    if (user) {
+      fetchUserData();
+    }
+
+    return () => {
+      retryCount = maxRetries; // Stop any pending retries
+    };
   }, [user]);
 
   const handleSignOut = async () => {
     try {
-      const { error } = await auth.signOut();
+      // Update last_active before signing out
+      if (user) {
+        await supabase
+          .from('users')
+          .update({ last_active: new Date().toISOString() })
+          .eq('id', user.id);
+      }
+      
+      const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      navigate('/login');
+      
+      setUserDoc(null);
     } catch (error) {
       console.error('Error signing out:', error);
     }
   };
 
   const handleUpdateProfile = async () => {
+    if (!user) return;
+    
     try {
-      const { error } = await db
+      const { error: updateError } = await supabase
         .from('users')
-        .update({ profilePicUrl: profileUrl })
+        .update({ 
+          profile_pic_url: profileUrl,
+          last_active: new Date().toISOString()
+        })
         .eq('id', user.id);
 
-      if (error) throw error;
+      if (updateError) {
+        console.error('Error updating profile:', updateError);
+        return;
+      }
+      
       setShowProfileModal(false);
       setProfileUrl('');
       
-      // Update local state
-      const { data, error: userDataError } = await db
+      // Refresh user data
+      const { data: refreshedData, error: refreshError } = await supabase
         .from('users')
-        .select()
-        .eq('id', user.id);
+        .select('id, email, username, display_name, profile_pic_url, last_login, last_active, created_at')
+        .eq('id', user.id)
+        .single();
 
-      if (userDataError) throw userDataError;
-      if (data && data.length > 0) {
-        setUserDoc(data[0]);
+      if (refreshError) {
+        console.error('Error fetching updated user data:', refreshError);
+        return;
+      }
+
+      if (refreshedData) {
+        setUserDoc(refreshedData);
       }
     } catch (error) {
-      console.error('Error updating profile picture:', error);
+      console.error('Error in profile update flow:', error);
     }
   };
 
@@ -141,9 +258,9 @@ function Navbar() {
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center space-x-2 text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300"
                   >
-                    {userDoc?.profilePicUrl ? (
+                    {userDoc?.profile_pic_url ? (
                       <img
-                        src={userDoc?.profilePicUrl}
+                        src={userDoc.profile_pic_url}
                         alt="Profile"
                         className="w-8 h-8 rounded-full object-cover"
                       />

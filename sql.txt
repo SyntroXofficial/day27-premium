@@ -1,0 +1,101 @@
+-- Enable UUID extension
+create extension if not exists "uuid-ossp";
+
+-- First, disable RLS
+alter table public.users disable row level security;
+alter table public.games disable row level security;
+alter table public.generators disable row level security;
+
+-- Drop all existing policies and tables
+drop policy if exists "Enable read access for all users" on public.users;
+drop policy if exists "Enable insert for service role" on public.users;
+drop policy if exists "Enable update for users based on id" on public.users;
+drop policy if exists "Enable delete for service role" on public.users;
+drop policy if exists "Anyone can view games" on public.games;
+drop policy if exists "Admin can manage games" on public.games;
+drop policy if exists "Anyone can view generators" on public.generators;
+drop policy if exists "Admin can manage generators" on public.generators;
+
+drop table if exists public.users cascade;
+drop table if exists public.games cascade;
+drop table if exists public.generators cascade;
+
+-- Create users table with exact columns we need
+create table public.users (
+    id uuid primary key references auth.users on delete cascade,
+    email text unique not null,
+    username text unique,
+    display_name text,
+    profile_pic_url text,
+    last_login timestamp with time zone,
+    last_active timestamp with time zone,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Create games table
+create table public.games (
+    id uuid default uuid_generate_v4() primary key,
+    title text not null,
+    description text,
+    image_url text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    created_by uuid references auth.users(id)
+);
+
+-- Create generators table
+create table public.generators (
+    id uuid default uuid_generate_v4() primary key,
+    title text not null,
+    description text,
+    image_url text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    created_by uuid references auth.users(id)
+);
+
+-- Enable RLS
+alter table public.users enable row level security;
+alter table public.games enable row level security;
+alter table public.generators enable row level security;
+
+-- Create simplified RLS policies
+create policy "Allow full access to authenticated users"
+    on public.users for all
+    to authenticated
+    using (true)
+    with check (true);
+
+create policy "Anyone can view games"
+    on public.games for select
+    to anon, authenticated
+    using (true);
+
+create policy "Anyone can view generators"
+    on public.generators for select
+    to anon, authenticated
+    using (true);
+
+create policy "Admin can manage games"
+    on public.games for all
+    to authenticated
+    using (auth.email() = 'andres_rios_xyz@outlook.com')
+    with check (auth.email() = 'andres_rios_xyz@outlook.com');
+
+create policy "Admin can manage generators"
+    on public.generators for all
+    to authenticated
+    using (auth.email() = 'andres_rios_xyz@outlook.com')
+    with check (auth.email() = 'andres_rios_xyz@outlook.com');
+
+-- Grant necessary permissions
+grant usage on schema public to anon, authenticated, service_role;
+grant all privileges on all tables in schema public to service_role;
+grant select, insert, update, delete on public.users to authenticated;
+grant select on public.games, public.generators to anon, authenticated;
+
+-- Create indexes
+create index if not exists users_username_idx on public.users (username);
+create index if not exists users_email_idx on public.users (email);
+create index if not exists games_created_by_idx on public.games (created_by);
+create index if not exists generators_created_by_idx on public.generators (created_by);

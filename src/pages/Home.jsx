@@ -50,103 +50,121 @@ function Home() {
   const [generators, setGenerators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dbSetupNeeded, setDbSetupNeeded] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const checkDbSetup = async () => {
       try {
-        const usersRef = db.from('users');
-        const usersData = await usersRef.select('*');
-        const totalUsers = usersData.data.length;
+        const promises = [
+          db.from('users').select('count', { count: 'exact', head: true }),
+          db.from('games').select('count', { count: 'exact', head: true }),
+          db.from('generators').select('count', { count: 'exact', head: true })
+        ];
 
-        const adminQuery = db.from('users').select('*').eq('email', 'andres_rios_xyz@outlook.com');
-        const adminData = await adminQuery;
-        if (adminData.data.length > 0) {
-          setAdminUser(adminData.data[0]);
+        const results = await Promise.all(promises);
+        const hasError = results.some(result => result.error?.message?.includes('does not exist'));
+        
+        if (hasError) {
+          setDbSetupNeeded(true);
+          setLoading(false);
+          return;
         }
 
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const activeUsersQuery = db.from('users').select('*').gt('lastActive', twentyFourHoursAgo);
-        const activeUsersData = await activeUsersQuery;
-
-        const activeUsersList = activeUsersData.data.map(user => ({
-          id: user.id,
-          ...user
-        }));
-        setActiveUsers(activeUsersList);
-
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
-        const dailyLoginsQuery = db.from('users').select('*').gt('lastLogin', todayStart);
-        const dailyLoginsData = await dailyLoginsQuery;
-
-        setStats({
-          totalUsers,
-          activeUsers: activeUsersData.data.length,
-          totalGames: 0,
-          totalMovies: 1000,
-          totalShows: 500,
-          dailyLogins: dailyLoginsData.data.length,
-          staff: 1
-        });
-
+        // If tables exist, proceed with data fetching
+        fetchData();
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error checking database setup:', error);
+        setDbSetupNeeded(true);
+        setLoading(false);
       }
     };
 
-    const fetchLatestContent = async () => {
+    checkDbSetup();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      // Initialize default stats
+      const defaultStats = {
+        totalUsers: 0,
+        activeUsers: 0,
+        totalGames: 0,
+        totalMovies: 1000,
+        totalShows: 500,
+        dailyLogins: 0,
+        staff: 1
+      };
+
+      let stats = { ...defaultStats };
+
       try {
-        // Fetch latest games
+        const { data: usersData, error: usersError } = await db
+          .from('users')
+          .select('*');
+
+        if (!usersError) {
+          stats.totalUsers = usersData.length;
+          
+          const now = new Date();
+          const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000);
+          
+          stats.activeUsers = usersData.filter(user => {
+            const lastActive = new Date(user.last_active);
+            return lastActive >= oneDayAgo;
+          }).length;
+
+          stats.dailyLogins = usersData.filter(user => {
+            const lastLogin = new Date(user.last_login);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return lastLogin >= today;
+          }).length;
+        }
+      } catch (error) {
+        console.log('Users table not ready:', error);
+      }
+
+      setStats(stats);
+
+      // Fetch latest content
+      try {
         const { data: gamesData, error: gamesError } = await db
           .from('games')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(6);
 
-        if (gamesError) throw gamesError;
-        setGames(gamesData);
+        if (!gamesError) {
+          setGames(gamesData);
+          stats.totalGames = gamesData.length;
+        }
+      } catch (error) {
+        console.log('Games table not ready:', error);
+        setGames([]);
+      }
 
-        // Fetch latest generators
+      try {
         const { data: generatorsData, error: generatorsError } = await db
           .from('generators')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(6);
 
-        if (generatorsError) throw generatorsError;
-        setGenerators(generatorsData);
-
-        setLoading(false);
+        if (!generatorsError) {
+          setGenerators(generatorsData);
+        }
       } catch (error) {
-        console.error('Error fetching content:', error);
-        setError('Failed to load content');
-        setLoading(false);
+        console.log('Generators table not ready:', error);
+        setGenerators([]);
       }
-    };
 
-    fetchData();
-    fetchLatestContent();
-
-    // Set up real-time subscriptions
-    const gamesSubscription = db
-      .from('games')
-      .on('*', (payload) => {
-        fetchLatestContent(); // Refresh when changes occur
-      })
-      .subscribe();
-
-    const generatorsSubscription = db
-      .from('generators')
-      .on('*', (payload) => {
-        fetchLatestContent(); // Refresh when changes occur
-      })
-      .subscribe();
-
-    return () => {
-      gamesSubscription.unsubscribe();
-      generatorsSubscription.unsubscribe();
-    };
-  }, []);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Failed to load content');
+      setLoading(false);
+    }
+  };
 
   const formatLastActive = (lastActive) => {
     if (!lastActive || !lastActive.toDate) return 'Never';
@@ -174,6 +192,92 @@ function Home() {
       return false;
     }
   };
+
+  if (dbSetupNeeded) {
+    return (
+      <div className="min-h-screen bg-black text-white p-8">
+        <div className="max-w-2xl mx-auto bg-gray-900 rounded-lg p-6 shadow-lg">
+          <h2 className="text-2xl font-bold mb-4">Database Setup Required</h2>
+          <p className="mb-4">The application requires some database tables to be created. Please follow these steps:</p>
+          <ol className="list-decimal list-inside space-y-2 mb-4">
+            <li>Go to your Supabase dashboard</li>
+            <li>Navigate to the SQL editor</li>
+            <li>Copy and run the following SQL commands:</li>
+          </ol>
+          <pre className="bg-gray-800 p-4 rounded-md overflow-x-auto text-sm mb-4">
+{`-- Enable UUID extension
+create extension if not exists "uuid-ossp";
+
+-- Users table
+create table public.users (
+  id uuid references auth.users on delete cascade,
+  email text,
+  last_active timestamp with time zone,
+  last_login timestamp with time zone,
+  profile_pic_url text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  primary key (id)
+);
+
+-- Games table
+create table public.games (
+  id uuid default uuid_generate_v4() primary key,
+  title text not null,
+  description text,
+  image_url text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Generators table
+create table public.generators (
+  id uuid default uuid_generate_v4() primary key,
+  title text not null,
+  description text,
+  image_url text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Set up Row Level Security (RLS)
+alter table public.users enable row level security;
+alter table public.games enable row level security;
+alter table public.generators enable row level security;
+
+-- Create policies
+create policy "Users can view all users"
+  on public.users for select
+  to authenticated
+  using (true);
+
+create policy "Users can update their own data"
+  on public.users for update
+  to authenticated
+  using (auth.uid() = id);
+
+create policy "Anyone can view games"
+  on public.games for select
+  to anon, authenticated
+  using (true);
+
+create policy "Anyone can view generators"
+  on public.generators for select
+  to anon, authenticated
+  using (true);`}
+          </pre>
+          <p className="text-yellow-400">After running these commands, refresh this page.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

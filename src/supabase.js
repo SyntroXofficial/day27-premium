@@ -16,15 +16,18 @@ export const auth = {
   signOut: async () => {
     return await supabase.auth.signOut()
   },
-  getUser: () => {
-    return supabase.auth.getUser()
+  getUser: async () => {
+    const { data: { user }, error } = await supabase.auth.getUser()
+    return user
+  },
+  user: () => {
+    const { data: { session } } = supabase.auth.getSession()
+    return session?.user || null
+  },
+  onAuthStateChange: (callback) => {
+    return supabase.auth.onAuthStateChange(callback)
   }
 }
 
-// Database helper functions
+// Database helper
 export const db = supabase
-
-// Storage helper functions
-export const storage = {
-  from: (bucket) => supabase.storage.from(bucket)
-}

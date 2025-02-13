@@ -33,7 +33,21 @@ function PrivateRoute({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const checkAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        setIsAuthenticated(!!user);
+      } catch (error) {
+        console.error('Error checking auth:', error);
+      } finally {
+        setAuthChecked(true);
+      }
+    };
+
+    checkAuth();
+
+    const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setUser(session.user);
         setIsAuthenticated(true);
@@ -44,12 +58,18 @@ function PrivateRoute({ children }) {
     });
 
     return () => {
-      authListener?.unsubscribe();
+      if (authListener) {
+        authListener.unsubscribe();
+      }
     };
   }, []);
 
   if (!authChecked) {
-    return null; // or a loading spinner
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -66,7 +86,21 @@ function AdminRoute({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const checkAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        setIsAuthenticated(!!user);
+      } catch (error) {
+        console.error('Error checking auth:', error);
+      } finally {
+        setAuthChecked(true);
+      }
+    };
+
+    checkAuth();
+
+    const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setUser(session.user);
         setIsAuthenticated(true);
@@ -77,12 +111,18 @@ function AdminRoute({ children }) {
     });
 
     return () => {
-      authListener?.unsubscribe();
+      if (authListener) {
+        authListener.unsubscribe();
+      }
     };
   }, []);
 
   if (!authChecked) {
-    return null; // or a loading spinner
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
   }
 
   const isAdmin = user?.email === 'andres_rios_xyz@outlook.com';
@@ -139,7 +179,21 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const checkAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        setIsAuthenticated(!!user);
+      } catch (error) {
+        console.error('Error checking auth:', error);
+      } finally {
+        setAuthChecked(true);
+      }
+    };
+
+    checkAuth();
+
+    const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setUser(session.user);
         setIsAuthenticated(true);
@@ -150,14 +204,16 @@ function App() {
     });
 
     return () => {
-      authListener?.unsubscribe();
+      if (authListener) {
+        authListener.unsubscribe();
+      }
     };
   }, []);
 
   if (!authChecked) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
       </div>
     );
   }

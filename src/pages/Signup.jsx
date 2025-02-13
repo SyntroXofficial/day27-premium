@@ -25,26 +25,13 @@ function Signup() {
     }
 
     try {
-      // Check if username already exists
-      const { data: existingUsers, error: queryError } = await db
-        .from('users')
-        .select('username')
-        .eq('username', username)
-        .single();
-
-      if (queryError && queryError.code !== 'PGRST116') {
-        throw queryError;
-      }
-
-      if (existingUsers) {
-        setError('Username already exists');
-        setLoading(false);
-        return;
-      }
-
-      // Create user
+      // Create auth user first
       const { data: authData, error: signUpError } = await auth.signUp(email, password);
       if (signUpError) throw signUpError;
+
+      if (!authData?.user?.id) {
+        throw new Error('Failed to create user account');
+      }
 
       // Create user profile
       const { error: insertError } = await db
@@ -54,9 +41,10 @@ function Signup() {
             id: authData.user.id,
             email: email,
             username: username,
+            display_name: username,
             created_at: new Date().toISOString(),
-            role: 'user',
-            status: 'active'
+            last_login: new Date().toISOString(),
+            last_active: new Date().toISOString()
           }
         ]);
 
@@ -64,6 +52,7 @@ function Signup() {
 
       navigate('/');
     } catch (error) {
+      console.error('Signup error:', error);
       setError(error.message);
     } finally {
       setLoading(false);

@@ -147,17 +147,23 @@ function Games() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
+        setLoading(true);
         const { data, error } = await db
           .from('games')
           .select('*')
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        setGames(data);
-        setLoading(false);
+        if (error) {
+          console.log('Games table not ready:', error);
+          setGames([]);
+          setError('No games available yet');
+        } else {
+          setGames(data || []);
+        }
       } catch (error) {
         console.error('Error fetching games:', error);
         setError('Failed to load games');
+      } finally {
         setLoading(false);
       }
     };
